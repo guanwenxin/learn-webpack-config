@@ -3,16 +3,14 @@ const { VueLoaderPlugin } = require('vue-loader')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { DefinePlugin } = require('webpack')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const WebPackBar = require('webpackbar')
 
 module.exports = {
     entry: './src/main.js',
     output: {
-        path: path.join(__dirname, 'dist'),
+        path: path.join(__dirname, '../dist'),
         filename: 'js/[name].[contenthash:8].js'
     },
-    // mode: 'development',
-    mode: 'production',
-    // mode: 'development',
     module: {
         rules: [
             // 处理SFC
@@ -67,6 +65,7 @@ module.exports = {
     },
     plugins: [
         new VueLoaderPlugin(),
+        new WebPackBar(),
         new HtmlWebpackPlugin({
             template: 'index.html'
         }),
@@ -78,5 +77,32 @@ module.exports = {
             filename: 'css/[name].[hash:8].css'
         }),
     ],
-    devtool: 'source-map'
+    devtool: 'source-map',
+    // 外部依赖, 1.将vue引入替换成从window对象上获取，2.在index.html中写上cnd链接
+    // lodash工具库，axios，elementui
+    externalsType: 'window',
+    externals: {
+        vue: 'Vue'
+    },
+    optimization: {
+        // 自动分包
+        splitChunks: {
+            cacheGroups: {
+                defaultVendors: {
+                    name: 'chunk-vendors',
+                    test: /[\\/]node_modules[\\/]/,
+                    priority: -10,
+                    chunks: 'initial'
+                },
+                common: {
+                    name: 'chunk-common',
+                    minChunks: 2,
+                    priority: -20,
+                    chunks: 'initial',
+                    reuseExistingChunk: true
+                }
+            }
+        },
+
+    },
 }
