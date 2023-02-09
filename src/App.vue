@@ -7,10 +7,13 @@ const msg = ref('Hello World!')
 <template>
     <h1>{{ msg }}</h1>
     <input v-model="msg">
+    <img src="./assets/test.png"/>
 </template>
 
-<style>
+<style lang="scss">
+$font-color: red;
+
 h1 {
-    color: red;
+    color: $font-color;
 }
 </style>
